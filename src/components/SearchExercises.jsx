@@ -1,7 +1,23 @@
 import React, {useState, useEffect} from 'react'
 import  { Box, Button, Stack, TextField, Typography } from '@mui/material'
+import { exerciseData } from '../data/exerciseData'
 
-const SearchExercises = () => {
+const SearchExercises = ({ search, setSearch, setExercises }) => {
+
+  const handleSearch = () => {
+    if (search) {
+      const searchedExercises = exerciseData.filter(
+        (exercise) => exercise.name.toLowerCase().includes(search.toLowerCase())
+          || exercise.bodyPart.toLowerCase().includes(search.toLowerCase())
+          || exercise.target.toLowerCase().includes(search.toLowerCase())
+          || exercise.equipment.toLowerCase().includes(search.toLowerCase())
+      )
+      
+      setSearch('')
+      setExercises(searchedExercises)
+    }
+  }
+
   return (
     <Stack alignItems="center" 
            mt="37px" justifyContent="center" p="20px">
@@ -27,8 +43,8 @@ const SearchExercises = () => {
               borderRadius:"40px"
               }}
               height="76px"
-              value=""
-              onChange={(e) => {}}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
               placeholder="Search Exercises" 
               type="text"
             />
@@ -42,6 +58,7 @@ const SearchExercises = () => {
               height:"56px",
               position:"absolute"
             }}
+            onClick={handleSearch}
             >
               Search
             </Button>
