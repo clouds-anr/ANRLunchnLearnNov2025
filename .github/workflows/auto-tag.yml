@@ -1,0 +1,64 @@
+name: Tag Sprint on Merge from Development to Main
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  tag-sprint:
+    name: Tag Development Branch with Sprint#
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all history to get all tags
+
+      - name: Check if merge commit
+        id: check_merge
+        run: |
+          # Count the number of parents. Merge commits have 2+ parents
+          parent_count=$(git rev-list --parents -n 1 HEAD | wc -w)
+          # Subtract 1 because the first value is the commit itself
+          parent_count=$((parent_count - 1))
+
+          if [ "$parent_count" -ge 2 ]; then
+            echo "is_merge=true" >> $GITHUB_OUTPUT
+            echo "This is a merge commit with $parent_count parents"
+          else
+            echo "is_merge=false" >> $GITHUB_OUTPUT
+            echo "This is not a merge commit (only $parent_count parent)"
+          fi
+
+      - name: Get latest Sprint tag
+        if: steps.check_merge.outputs.is_merge == 'true'
+        id: get_tag
+        run: |
+          # List tags matching Sprint#, sort by number, get the highest
+          latest_tag=$(git tag --list 'Sprint*' | grep -E '^Sprint[0-9]+$' | sort -V | tail -n1)
+          if [ -z "$latest_tag" ]; then
+            next_tag="Sprint4"
+          else
+            num=$(echo $latest_tag | grep -oE '[0-9]+')
+            next_num=$((num+1))
+            next_tag="Sprint${next_num}"
+          fi
+          echo "next_tag=$next_tag" >> $GITHUB_OUTPUT
+
+      - name: Set up Git user
+        if: steps.check_merge.outputs.is_merge == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Fetch development branch
+        if: steps.check_merge.outputs.is_merge == 'true'
+        run: git fetch origin development:development
+
+      - name: Tag development branch with next Sprint tag
+        if: steps.check_merge.outputs.is_merge == 'true'
+        run: |
+          git tag "${{ steps.get_tag.outputs.next_tag }}" development
+          git push origin "${{ steps.get_tag.outputs.next_tag }}"
