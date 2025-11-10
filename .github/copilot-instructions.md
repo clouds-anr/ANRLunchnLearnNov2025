@@ -295,4 +295,4 @@ ANRLunchAndLearn2025/
 
 ---
 
-applyTo: "/*.js,/*.jsx"
+applyTo: "**/*.js,**/*.jsx"
