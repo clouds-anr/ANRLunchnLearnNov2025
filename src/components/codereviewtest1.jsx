@@ -1,6 +1,3 @@
-// BrokenTestComponent.jsx
-// Intentionally breaks 12 Copilot standards for testing/review purposes.
-
 import React, { useEffect } from "react";
 
 /*
@@ -8,7 +5,7 @@ import React, { useEffect } from "react";
 */
 
 // 1) Component name is camelCase (violates PascalCase rule)
-class BrokenComponent extends React.Component {
+class brokenComponent extends React.Component {
   constructor(props) {
     super(props);
 
@@ -96,4 +93,4 @@ function BrokenChild(props) {
 }
 
 // Default export is the class component (file contains multiple components)
-export default BrokenComponent;
+export default brokenComponent;
