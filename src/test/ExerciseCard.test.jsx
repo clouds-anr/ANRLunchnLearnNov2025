@@ -23,7 +23,9 @@ describe('ExerciseCard', () => {
     expect(screen.getByText(/push up/i)).toBeInTheDocument();
     expect(screen.getByText(/chest/i)).toBeInTheDocument();
     expect(screen.getByText(/pectorals/i)).toBeInTheDocument();
-    expect(screen.getByText(/Equipment: body weight/i)).toBeInTheDocument();
+    expect(screen.getByText(/body weight/i)).toBeInTheDocument();
+    expect(screen.getByText(/Target Muscle/i)).toBeInTheDocument();
+    expect(screen.getByText(/Equipment/i)).toBeInTheDocument();
   });
 
   it('should render image when gifUrl is provided', () => {
@@ -56,11 +58,15 @@ describe('ExerciseCard', () => {
     expect(article).toHaveAttribute('aria-label', 'Exercise: push up');
   });
 
-  it('should render chips for body part and target', () => {
+  it('should render detail sections with icons', () => {
     const { container } = renderWithRouter(<ExerciseCard exercise={mockExercise} />);
 
-    const chips = container.querySelectorAll('.MuiChip-root');
-    expect(chips).toHaveLength(2);
+    // Check for icons
+    const targetMuscleIcon = container.querySelector('svg[data-testid="SportsMartialArtsIcon"]');
+    const equipmentIcon = container.querySelector('svg[data-testid="BuildIcon"]');
+    
+    expect(targetMuscleIcon).toBeInTheDocument();
+    expect(equipmentIcon).toBeInTheDocument();
   });
 
   it('should capitalize exercise information', () => {
