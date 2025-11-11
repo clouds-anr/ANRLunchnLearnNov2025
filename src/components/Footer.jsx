@@ -12,6 +12,7 @@ import {
   Alert,
   CircularProgress,
   Collapse,
+  Divider,
 } from '@mui/material';
 import {
   Facebook,
@@ -20,7 +21,10 @@ import {
   LinkedIn,
   GitHub,
   Email,
+  Send,
+  CheckCircle,
 } from '@mui/icons-material';
+import emailjs from '@emailjs/browser';
 
 const Footer = () => {
   const [email, setEmail] = useState('');
@@ -64,8 +68,22 @@ const Footer = () => {
     setSuccess(false);
 
     try {
-      // Simulate API call with delay
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      // Initialize EmailJS with public key
+      emailjs.init('YOUR_PUBLIC_KEY'); // Replace with actual public key from EmailJS dashboard
+      
+      // Send email using EmailJS
+      const templateParams = {
+        to_email: email,
+        from_name: 'ANR Fitness Club',
+        message: `Thank you for subscribing to our newsletter! You'll receive fitness tips and updates at ${email}.`,
+        reply_to: 'contact@anrfitness.com',
+      };
+      
+      await emailjs.send(
+        'YOUR_SERVICE_ID', // Replace with your EmailJS service ID
+        'YOUR_TEMPLATE_ID', // Replace with your EmailJS template ID
+        templateParams
+      );
       
       // Track analytics
       if (window.gtag) {
@@ -78,9 +96,10 @@ const Footer = () => {
       setSuccess(true);
       setEmail('');
       
-      // Hide success message after 5 seconds
-      setTimeout(() => setSuccess(false), 5000);
+      // Hide success message after 8 seconds
+      setTimeout(() => setSuccess(false), 8000);
     } catch (err) {
+      console.error('Newsletter signup error:', err);
       setError('Failed to subscribe. Please try again later.');
       
       // Track error in analytics
@@ -119,65 +138,121 @@ const Footer = () => {
     <Box
       component="footer"
       sx={{
-        backgroundColor: '#f5f5f5',
-        borderTop: '3px solid #FF2625',
+        background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',
+        borderTop: '4px solid #FF2625',
         mt: 8,
-        py: { xs: 4, md: 6 },
+        py: { xs: 5, md: 7 },
+        color: '#fff',
+        position: 'relative',
+        overflow: 'hidden',
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'radial-gradient(circle at 30% 50%, rgba(255, 38, 37, 0.05) 0%, transparent 50%)',
+          pointerEvents: 'none',
+        },
       }}
       role="contentinfo"
     >
-      <Container maxWidth="lg">
-        <Grid container spacing={4}>
+      <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
+        <Grid container spacing={5}>
           {/* Branding Section */}
           <Grid item xs={12} md={4}>
             <Typography
-              variant="h6"
+              variant="h5"
               color="#FF2625"
-              fontWeight={700}
+              fontWeight={800}
               gutterBottom
-              sx={{ fontSize: { xs: '1.25rem', md: '1.5rem' } }}
+              sx={{ 
+                fontSize: { xs: '1.5rem', md: '1.75rem' },
+                letterSpacing: '0.5px',
+                mb: 2,
+              }}
             >
               ANR Fitness Club
             </Typography>
             <Typography
               variant="body2"
-              color="#3A1212"
-              sx={{ mb: 2, lineHeight: 1.7 }}
+              sx={{ 
+                mb: 3, 
+                lineHeight: 1.8,
+                color: 'rgba(255, 255, 255, 0.8)',
+                fontSize: '0.95rem',
+              }}
             >
               Your ultimate destination for fitness exercises and wellness.
-              Sweat, smile, and repeat with our comprehensive exercise database.
+              Transform your body, elevate your mind.
             </Typography>
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+                p: 2,
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                borderRadius: 2,
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                  borderColor: '#FF2625',
+                },
+              }}
             >
-              <Email fontSize="small" />
-              contact@anrfitness.com
-            </Typography>
+              <Email sx={{ color: '#FF2625', fontSize: '1.2rem' }} />
+              <Typography
+                variant="body2"
+                sx={{ color: 'rgba(255, 255, 255, 0.9)', fontSize: '0.9rem' }}
+              >
+                contact@anrfitness.com
+              </Typography>
+            </Box>
           </Grid>
 
           {/* Quick Links Section */}
           <Grid item xs={12} sm={6} md={2}>
             <Typography
               variant="h6"
-              color="#3A1212"
-              fontWeight={600}
+              fontWeight={700}
               gutterBottom
-              sx={{ fontSize: '1rem' }}
+              sx={{ 
+                fontSize: '1.1rem',
+                mb: 2.5,
+                color: '#fff',
+                letterSpacing: '0.5px',
+              }}
             >
               Quick Links
             </Typography>
-            <Stack spacing={1}>
+            <Stack spacing={1.5}>
               <Link
                 href="/"
-                color="#3A1212"
-                underline="hover"
+                underline="none"
                 onClick={() => handleLinkClick('home')}
                 sx={{
+                  color: 'rgba(255, 255, 255, 0.7)',
                   cursor: 'pointer',
-                  '&:hover': { color: '#FF2625' },
-                  transition: 'color 0.2s',
+                  display: 'flex',
+                  alignItems: 'center',
+                  fontSize: '0.9rem',
+                  transition: 'all 0.3s ease',
+                  '&:hover': { 
+                    color: '#FF2625',
+                    transform: 'translateX(5px)',
+                  },
+                  '&::before': {
+                    content: '"→"',
+                    marginRight: '8px',
+                    opacity: 0,
+                    transition: 'opacity 0.3s ease',
+                  },
+                  '&:hover::before': {
+                    opacity: 1,
+                  },
                 }}
                 aria-label="Navigate to home page"
               >
@@ -185,13 +260,28 @@ const Footer = () => {
               </Link>
               <Link
                 href="#exercises"
-                color="#3A1212"
-                underline="hover"
+                underline="none"
                 onClick={() => handleLinkClick('exercises')}
                 sx={{
+                  color: 'rgba(255, 255, 255, 0.7)',
                   cursor: 'pointer',
-                  '&:hover': { color: '#FF2625' },
-                  transition: 'color 0.2s',
+                  display: 'flex',
+                  alignItems: 'center',
+                  fontSize: '0.9rem',
+                  transition: 'all 0.3s ease',
+                  '&:hover': { 
+                    color: '#FF2625',
+                    transform: 'translateX(5px)',
+                  },
+                  '&::before': {
+                    content: '"→"',
+                    marginRight: '8px',
+                    opacity: 0,
+                    transition: 'opacity 0.3s ease',
+                  },
+                  '&:hover::before': {
+                    opacity: 1,
+                  },
                 }}
                 aria-label="Navigate to exercises section"
               >
@@ -199,13 +289,28 @@ const Footer = () => {
               </Link>
               <Link
                 href="#about"
-                color="#3A1212"
-                underline="hover"
+                underline="none"
                 onClick={() => handleLinkClick('about')}
                 sx={{
+                  color: 'rgba(255, 255, 255, 0.7)',
                   cursor: 'pointer',
-                  '&:hover': { color: '#FF2625' },
-                  transition: 'color 0.2s',
+                  display: 'flex',
+                  alignItems: 'center',
+                  fontSize: '0.9rem',
+                  transition: 'all 0.3s ease',
+                  '&:hover': { 
+                    color: '#FF2625',
+                    transform: 'translateX(5px)',
+                  },
+                  '&::before': {
+                    content: '"→"',
+                    marginRight: '8px',
+                    opacity: 0,
+                    transition: 'opacity 0.3s ease',
+                  },
+                  '&:hover::before': {
+                    opacity: 1,
+                  },
                 }}
                 aria-label="Navigate to about section"
               >
@@ -218,23 +323,42 @@ const Footer = () => {
           <Grid item xs={12} sm={6} md={2}>
             <Typography
               variant="h6"
-              color="#3A1212"
-              fontWeight={600}
+              fontWeight={700}
               gutterBottom
-              sx={{ fontSize: '1rem' }}
+              sx={{ 
+                fontSize: '1.1rem',
+                mb: 2.5,
+                color: '#fff',
+                letterSpacing: '0.5px',
+              }}
             >
               Resources
             </Typography>
-            <Stack spacing={1}>
+            <Stack spacing={1.5}>
               <Link
                 href="#blog"
-                color="#3A1212"
-                underline="hover"
+                underline="none"
                 onClick={() => handleLinkClick('blog')}
                 sx={{
+                  color: 'rgba(255, 255, 255, 0.7)',
                   cursor: 'pointer',
-                  '&:hover': { color: '#FF2625' },
-                  transition: 'color 0.2s',
+                  display: 'flex',
+                  alignItems: 'center',
+                  fontSize: '0.9rem',
+                  transition: 'all 0.3s ease',
+                  '&:hover': { 
+                    color: '#FF2625',
+                    transform: 'translateX(5px)',
+                  },
+                  '&::before': {
+                    content: '"→"',
+                    marginRight: '8px',
+                    opacity: 0,
+                    transition: 'opacity 0.3s ease',
+                  },
+                  '&:hover::before': {
+                    opacity: 1,
+                  },
                 }}
                 aria-label="Navigate to blog"
               >
@@ -242,13 +366,28 @@ const Footer = () => {
               </Link>
               <Link
                 href="#faq"
-                color="#3A1212"
-                underline="hover"
+                underline="none"
                 onClick={() => handleLinkClick('faq')}
                 sx={{
+                  color: 'rgba(255, 255, 255, 0.7)',
                   cursor: 'pointer',
-                  '&:hover': { color: '#FF2625' },
-                  transition: 'color 0.2s',
+                  display: 'flex',
+                  alignItems: 'center',
+                  fontSize: '0.9rem',
+                  transition: 'all 0.3s ease',
+                  '&:hover': { 
+                    color: '#FF2625',
+                    transform: 'translateX(5px)',
+                  },
+                  '&::before': {
+                    content: '"→"',
+                    marginRight: '8px',
+                    opacity: 0,
+                    transition: 'opacity 0.3s ease',
+                  },
+                  '&:hover::before': {
+                    opacity: 1,
+                  },
                 }}
                 aria-label="Navigate to FAQ"
               >
@@ -256,13 +395,28 @@ const Footer = () => {
               </Link>
               <Link
                 href="#privacy"
-                color="#3A1212"
-                underline="hover"
+                underline="none"
                 onClick={() => handleLinkClick('privacy')}
                 sx={{
+                  color: 'rgba(255, 255, 255, 0.7)',
                   cursor: 'pointer',
-                  '&:hover': { color: '#FF2625' },
-                  transition: 'color 0.2s',
+                  display: 'flex',
+                  alignItems: 'center',
+                  fontSize: '0.9rem',
+                  transition: 'all 0.3s ease',
+                  '&:hover': { 
+                    color: '#FF2625',
+                    transform: 'translateX(5px)',
+                  },
+                  '&::before': {
+                    content: '"→"',
+                    marginRight: '8px',
+                    opacity: 0,
+                    transition: 'opacity 0.3s ease',
+                  },
+                  '&:hover::before': {
+                    opacity: 1,
+                  },
                 }}
                 aria-label="Navigate to privacy policy"
               >
@@ -270,13 +424,28 @@ const Footer = () => {
               </Link>
               <Link
                 href="#terms"
-                color="#3A1212"
-                underline="hover"
+                underline="none"
                 onClick={() => handleLinkClick('terms')}
                 sx={{
+                  color: 'rgba(255, 255, 255, 0.7)',
                   cursor: 'pointer',
-                  '&:hover': { color: '#FF2625' },
-                  transition: 'color 0.2s',
+                  display: 'flex',
+                  alignItems: 'center',
+                  fontSize: '0.9rem',
+                  transition: 'all 0.3s ease',
+                  '&:hover': { 
+                    color: '#FF2625',
+                    transform: 'translateX(5px)',
+                  },
+                  '&:before': {
+                    content: '"→"',
+                    marginRight: '8px',
+                    opacity: 0,
+                    transition: 'opacity 0.3s ease',
+                  },
+                  '&:hover::before': {
+                    opacity: 1,
+                  },
                 }}
                 aria-label="Navigate to terms of service"
               >
@@ -289,14 +458,25 @@ const Footer = () => {
           <Grid item xs={12} md={4}>
             <Typography
               variant="h6"
-              color="#3A1212"
-              fontWeight={600}
+              fontWeight={700}
               gutterBottom
-              sx={{ fontSize: '1rem' }}
+              sx={{ 
+                fontSize: '1.1rem',
+                mb: 2.5,
+                color: '#fff',
+                letterSpacing: '0.5px',
+              }}
             >
               Newsletter
             </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            <Typography 
+              variant="body2" 
+              sx={{ 
+                mb: 3,
+                color: 'rgba(255, 255, 255, 0.7)',
+                lineHeight: 1.6,
+              }}
+            >
               Subscribe to get fitness tips and updates delivered to your inbox.
             </Typography>
             
@@ -308,7 +488,7 @@ const Footer = () => {
             >
               <TextField
                 fullWidth
-                size="small"
+                size="medium"
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => {
@@ -319,14 +499,40 @@ const Footer = () => {
                 error={!!error}
                 helperText={error}
                 sx={{
-                  mb: 1,
+                  mb: 2,
                   '& .MuiOutlinedInput-root': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                    borderRadius: 2,
+                    color: '#fff',
+                    transition: 'all 0.3s ease',
+                    '& fieldset': {
+                      borderColor: 'rgba(255, 255, 255, 0.2)',
+                    },
                     '&:hover fieldset': {
                       borderColor: '#FF2625',
+                      backgroundColor: 'rgba(255, 255, 255, 0.12)',
+                    },
+                    '&.Mui-focused': {
+                      backgroundColor: 'rgba(255, 255, 255, 0.12)',
                     },
                     '&.Mui-focused fieldset': {
                       borderColor: '#FF2625',
+                      borderWidth: 2,
                     },
+                  },
+                  '& .MuiInputBase-input': {
+                    color: '#fff',
+                    '&::placeholder': {
+                      color: 'rgba(255, 255, 255, 0.5)',
+                      opacity: 1,
+                    },
+                  },
+                  '& .MuiFormHelperText-root': {
+                    color: '#FF6B6B',
+                    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                    margin: '4px 0 0 0',
+                    padding: '4px 8px',
+                    borderRadius: 1,
                   },
                 }}
                 inputProps={{
@@ -338,12 +544,22 @@ const Footer = () => {
               
               <Collapse in={success}>
                 <Alert
+                  icon={<CheckCircle sx={{ color: '#4CAF50' }} />}
                   severity="success"
-                  sx={{ mb: 1 }}
+                  sx={{ 
+                    mb: 2,
+                    backgroundColor: 'rgba(76, 175, 80, 0.15)',
+                    border: '1px solid rgba(76, 175, 80, 0.3)',
+                    color: '#81C784',
+                    borderRadius: 2,
+                    '& .MuiAlert-message': {
+                      fontSize: '0.9rem',
+                    },
+                  }}
                   aria-live="polite"
                   role="status"
                 >
-                  Successfully subscribed! Check your inbox.
+                  ✉️ Confirmation email sent! Check your inbox.
                 </Alert>
               </Collapse>
 
@@ -352,52 +568,77 @@ const Footer = () => {
                 variant="contained"
                 fullWidth
                 disabled={loading || !email}
+                endIcon={!loading && <Send />}
                 sx={{
-                  backgroundColor: '#FF2625',
+                  background: 'linear-gradient(135deg, #FF2625 0%, #d41f1f 100%)',
+                  color: '#fff',
+                  py: 1.5,
+                  borderRadius: 2,
+                  fontWeight: 600,
+                  fontSize: '0.95rem',
+                  textTransform: 'none',
+                  letterSpacing: '0.5px',
+                  boxShadow: '0 4px 12px rgba(255, 38, 37, 0.3)',
+                  transition: 'all 0.3s ease',
                   '&:hover': {
-                    backgroundColor: '#d41f1f',
+                    background: 'linear-gradient(135deg, #d41f1f 0%, #FF2625 100%)',
+                    boxShadow: '0 6px 20px rgba(255, 38, 37, 0.4)',
+                    transform: 'translateY(-2px)',
+                  },
+                  '&:active': {
+                    transform: 'translateY(0)',
                   },
                   '&:disabled': {
-                    backgroundColor: '#ccc',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    color: 'rgba(255, 255, 255, 0.3)',
+                    boxShadow: 'none',
                   },
-                  height: '40px',
                 }}
                 aria-label="Subscribe to newsletter"
               >
                 {loading ? (
-                  <CircularProgress size={24} color="inherit" />
+                  <CircularProgress size={24} sx={{ color: 'rgba(255, 255, 255, 0.7)' }} />
                 ) : (
-                  'Subscribe'
+                  'Subscribe Now'
                 )}
               </Button>
             </Box>
           </Grid>
         </Grid>
 
-        {/* Social Media Icons */}
+        {/* Divider */}
+        <Divider 
+          sx={{ 
+            mt: 6, 
+            mb: 4, 
+            borderColor: 'rgba(255, 255, 255, 0.1)',
+          }} 
+        />
+
+        {/* Bottom Section */}
         <Box
           sx={{
-            mt: 4,
-            pt: 3,
-            borderTop: '1px solid #ddd',
             display: 'flex',
             flexDirection: { xs: 'column', sm: 'row' },
             justifyContent: 'space-between',
             alignItems: 'center',
-            gap: 2,
+            gap: 3,
           }}
         >
           <Typography
             variant="body2"
-            color="text.secondary"
             textAlign={{ xs: 'center', sm: 'left' }}
+            sx={{ 
+              color: 'rgba(255, 255, 255, 0.6)',
+              fontSize: '0.85rem',
+            }}
           >
             © {new Date().getFullYear()} ANR Fitness Club. All rights reserved.
           </Typography>
 
           <Stack
             direction="row"
-            spacing={1}
+            spacing={2}
             role="navigation"
             aria-label="Social media links"
           >
@@ -405,66 +646,111 @@ const Footer = () => {
               aria-label="Follow us on Facebook"
               onClick={() => handleSocialClick('facebook')}
               sx={{
-                color: '#3A1212',
-                '&:hover': { color: '#FF2625', backgroundColor: 'rgba(255, 38, 37, 0.08)' },
+                color: 'rgba(255, 255, 255, 0.7)',
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                transition: 'all 0.3s ease',
+                '&:hover': { 
+                  color: '#fff',
+                  backgroundColor: '#FF2625',
+                  borderColor: '#FF2625',
+                  transform: 'translateY(-3px)',
+                  boxShadow: '0 6px 12px rgba(255, 38, 37, 0.3)',
+                },
               }}
               href="https://facebook.com"
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Facebook />
+              <Facebook fontSize="small" />
             </IconButton>
             <IconButton
               aria-label="Follow us on Twitter"
               onClick={() => handleSocialClick('twitter')}
               sx={{
-                color: '#3A1212',
-                '&:hover': { color: '#FF2625', backgroundColor: 'rgba(255, 38, 37, 0.08)' },
+                color: 'rgba(255, 255, 255, 0.7)',
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                transition: 'all 0.3s ease',
+                '&:hover': { 
+                  color: '#fff',
+                  backgroundColor: '#FF2625',
+                  borderColor: '#FF2625',
+                  transform: 'translateY(-3px)',
+                  boxShadow: '0 6px 12px rgba(255, 38, 37, 0.3)',
+                },
               }}
               href="https://twitter.com"
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Twitter />
+              <Twitter fontSize="small" />
             </IconButton>
             <IconButton
               aria-label="Follow us on Instagram"
               onClick={() => handleSocialClick('instagram')}
               sx={{
-                color: '#3A1212',
-                '&:hover': { color: '#FF2625', backgroundColor: 'rgba(255, 38, 37, 0.08)' },
+                color: 'rgba(255, 255, 255, 0.7)',
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                transition: 'all 0.3s ease',
+                '&:hover': { 
+                  color: '#fff',
+                  backgroundColor: '#FF2625',
+                  borderColor: '#FF2625',
+                  transform: 'translateY(-3px)',
+                  boxShadow: '0 6px 12px rgba(255, 38, 37, 0.3)',
+                },
               }}
               href="https://instagram.com"
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Instagram />
+              <Instagram fontSize="small" />
             </IconButton>
             <IconButton
               aria-label="Connect with us on LinkedIn"
               onClick={() => handleSocialClick('linkedin')}
               sx={{
-                color: '#3A1212',
-                '&:hover': { color: '#FF2625', backgroundColor: 'rgba(255, 38, 37, 0.08)' },
+                color: 'rgba(255, 255, 255, 0.7)',
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                transition: 'all 0.3s ease',
+                '&:hover': { 
+                  color: '#fff',
+                  backgroundColor: '#FF2625',
+                  borderColor: '#FF2625',
+                  transform: 'translateY(-3px)',
+                  boxShadow: '0 6px 12px rgba(255, 38, 37, 0.3)',
+                },
               }}
               href="https://linkedin.com"
               target="_blank"
               rel="noopener noreferrer"
             >
-              <LinkedIn />
+              <LinkedIn fontSize="small" />
             </IconButton>
             <IconButton
               aria-label="View our GitHub repository"
               onClick={() => handleSocialClick('github')}
               sx={{
-                color: '#3A1212',
-                '&:hover': { color: '#FF2625', backgroundColor: 'rgba(255, 38, 37, 0.08)' },
+                color: 'rgba(255, 255, 255, 0.7)',
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                transition: 'all 0.3s ease',
+                '&:hover': { 
+                  color: '#fff',
+                  backgroundColor: '#FF2625',
+                  borderColor: '#FF2625',
+                  transform: 'translateY(-3px)',
+                  boxShadow: '0 6px 12px rgba(255, 38, 37, 0.3)',
+                },
               }}
               href="https://github.com"
               target="_blank"
               rel="noopener noreferrer"
             >
-              <GitHub />
+              <GitHub fontSize="small" />
             </IconButton>
           </Stack>
         </Box>
