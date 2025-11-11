@@ -120,8 +120,10 @@ const SearchExercises = ({ setExercises, setBodyPart }) => {
           onKeyPress={handleKeyPress}
           placeholder="Search Exercises by name, body part, target, or equipment"
           type="text"
-          aria-label="Search exercises"
           disabled={loading}
+          inputProps={{
+            'aria-label': 'Search exercises',
+          }}
         />
         <Button
           className="search-btn"
